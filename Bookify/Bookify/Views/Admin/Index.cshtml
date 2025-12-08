@@ -583,6 +583,10 @@
                             <i class="fa-solid fa-bed"></i>
                             <span>Manage Rooms</span>
                         </div>
+                        <div class="admin-nav-item" onclick="switchSection('admins', this)">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>Manage Admins</span>
+                        </div>
                     </div>
                     <div style="margin-top: var(--spacing-2xl); padding-top: var(--spacing-xl); border-top: 1px solid var(--color-gray-200);">
                         <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100">View Website</a>
@@ -658,16 +662,16 @@
                     <div id="bookingsSection" class="admin-section">
                         <div class="section-header">
                             <div>
-                                <h2 class="text-primary mb-2" style="margin-bottom: 0.25rem;">📋 Booking Management</h2>
+                                <h2 class="text-primary mb-2" style="margin-bottom: 0.25rem;">Booking Management</h2>
                                 <p class="text-gray" style="margin: 0;">Manage and track all customer bookings</p>
                             </div>
                             <div class="filter-group">
                                 <select id="bookingFilter" class="filter-select" onchange="filterBookingsTable()">
-                                    <option value="all">🔍 All Bookings</option>
-                                    <option value="Pending">⏳ Pending</option>
-                                    <option value="Confirmed">✅ Confirmed</option>
-                                    <option value="Completed">✔️ Completed</option>
-                                    <option value="Cancelled">❌ Cancelled</option>
+                                    <option value="all">All Bookings</option>
+                                    <option value="Pending">Pending</option>
+                                    <option value="Confirmed">Confirmed</option>
+                                    <option value="Completed">Completed</option>
+                                    <option value="Cancelled">Cancelled</option>
                                 </select>
                                 <span class="booking-count">@Model.AllBookings.Count() Total</span>
                             </div>
@@ -711,7 +715,7 @@
                                             <div class="booking-info-item">
                                                 <span class="booking-info-label">Room Details</span>
                                                 <div class="booking-info-value">@booking.Room.Name</div>
-                                                <div class="booking-info-sub">👥 @booking.NumberOfGuests guest(s) • @nights night(s)</div>
+                                                <div class="booking-info-sub">@booking.NumberOfGuests guest(s) • @nights night(s)</div>
                                             </div>
                                             <div class="booking-info-item">
                                                 <span class="booking-info-label">Duration</span>
@@ -723,42 +727,42 @@
                                             </div>
                                             <div class="booking-info-item" style="align-items: flex-end;">
                                                 <span class="booking-info-label">Total Amount</span>
-                                                <div class="price-tag">💰 @booking.TotalPrice.ToString("C0")</div>
+                                                <div class="price-tag">@booking.TotalPrice.ToString("C0")</div>
                                                 <div style="margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
                                                     <select class="status-select" 
                                                             data-booking-id="@booking.Id" 
                                                             onchange="updateBookingStatus(this)">
                                                         @if (status == "Pending")
                                                         {
-                                                            <option value="Pending" selected>⏳ Pending</option>
+                                                            <option value="Pending" selected>Pending</option>
                                                         }
                                                         else
                                                         {
-                                                            <option value="Pending">⏳ Pending</option>
+                                                            <option value="Pending">Pending</option>
                                                         }
                                                         @if (status == "Confirmed")
                                                         {
-                                                            <option value="Confirmed" selected>✅ Confirmed</option>
+                                                            <option value="Confirmed" selected>Confirmed</option>
                                                         }
                                                         else
                                                         {
-                                                            <option value="Confirmed">✅ Confirmed</option>
+                                                            <option value="Confirmed">Confirmed</option>
                                                         }
                                                         @if (status == "Completed")
                                                         {
-                                                            <option value="Completed" selected>✔️ Completed</option>
+                                                            <option value="Completed" selected>Completed</option>
                                                         }
                                                         else
                                                         {
-                                                            <option value="Completed">✔️ Completed</option>
+                                                            <option value="Completed">Completed</option>
                                                         }
                                                         @if (status == "Cancelled")
                                                         {
-                                                            <option value="Cancelled" selected>❌ Cancelled</option>
+                                                            <option value="Cancelled" selected>Cancelled</option>
                                                         }
                                                         else
                                                         {
-                                                            <option value="Cancelled">❌ Cancelled</option>
+                                                            <option value="Cancelled">Cancelled</option>
                                                         }
                                                     </select>
                                                     @if (status == "Cancelled")
@@ -808,6 +812,26 @@
                                     </div>
                                 </div>
                             }
+                        </div>
+                    </div>
+                    <div id="adminsSection" class="admin-section">
+                        <div class="d-flex justify-content-between align-items-center mb-6">
+                            <div>
+                                <h2 class="text-primary mb-2">Manage Administrators</h2>
+                                <p class="text-gray" style="margin: 0;">Create and manage admin accounts</p>
+                            </div>
+                            <a asp-controller="Admin" asp-action="CreateAdmin" class="btn btn-primary">
+                                <i class="fas fa-user-plus"></i> Create New Admin
+                            </a>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-content" style="padding: 1.5rem;">
+                                <h3 class="text-primary mb-4">Administrator Accounts</h3>
+                                <div id="adminsList">
+                                    <p class="text-gray">Loading admin accounts...</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -971,6 +995,57 @@
                 default: return 'badge-warning';
             }
         }
+        // --------------------------------------------
+                async function loadAdmins() {
+            try {
+                const response = await fetch('/Admin/GetAdmins');
+                const result = await response.json();
+
+                if (result.success && result.admins) {
+                    const adminsList = document.getElementById('adminsList');
+                    if (result.admins.length === 0) {
+                        adminsList.innerHTML = '<p class="text-gray">No admin accounts found.</p>';
+                        return;
+                    }
+
+                    let html = '<div style="display: grid; gap: 1rem;">';
+                    result.admins.forEach(admin => {
+                        const initials = admin.fullName.split(' ').map(n => n[0]).join('').toUpperCase();
+                        html += `
+                            <div class="card" style="padding: 1rem;">
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div class="guest-avatar">${initials}</div>
+                                    <div style="flex: 1;">
+                                        <div class="booking-info-value">${admin.fullName}</div>
+                                        <div class="booking-info-sub">${admin.email}</div>
+                                    </div>
+                                    <div>
+                                        ${admin.emailConfirmed ?
+                                            '<span class="badge-success">✓ Verified</span>' :
+                                            '<span class="badge-warning">⏳ Pending</span>'}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    html += '</div>';
+                    adminsList.innerHTML = html;
+                }
+            } catch (error) {
+                console.error('Error loading admins:', error);
+                document.getElementById('adminsList').innerHTML =
+                    '<p class="text-danger">Failed to load admin accounts.</p>';
+            }
+        }
+
+        // Load admins when the admins section is opened
+        const originalSwitchSection = switchSection;
+        switchSection = function(sectionId, element) {
+            originalSwitchSection(sectionId, element);
+            if (sectionId === 'admins') {
+                loadAdmins();
+            }
+        };
     </script>
 </body>
 </html>
