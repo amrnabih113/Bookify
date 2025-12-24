@@ -178,8 +178,8 @@ If you want to enable Google authentication, update the following section in `ap
 **How to get Google OAuth credentials:**
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
-3. Enable Google+ API
-4. Create OAuth 2.0 credentials
+3. Enable Google Identity Services (OAuth 2.0)
+4. Create OAuth 2.0 credentials (OAuth client ID)
 5. Add authorized redirect URI: `https://localhost:5001/signin-google`
 
 ---
@@ -296,7 +296,11 @@ Bookify/
 │   └── FavoriteRepository.cs
 ├── services/              # Business Logic Layer
 │   ├── IServices/         # Service interfaces
-│   └── [Service implementations]
+│   ├── BookingService.cs
+│   ├── AmenityService.cs
+│   ├── RoomService.cs
+│   ├── RoomTypeService.cs
+│   └── FavoriteService.cs
 ├── Custom Validation/     # Custom validation attributes
 ├── wwwroot/               # Static files
 │   ├── css/               # Stylesheets
