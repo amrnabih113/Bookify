@@ -331,7 +331,9 @@ This project was developed as part of the **DEPI (Digital Egypt Pioneers Initiat
 
 **Development Team:**
 - [Amr Nabih](https://github.com/amrnabih113) - Team Lead & Full Stack Developer
-- [Saleh Mostafa](https://github.com/salehmostafa11) - Backend Developer
+- [Saleh Mostafa](https://github.com/salehmostafa11) - Full Stack Developer
+- [Mahmoud Elshiha](https://github.com/MahmoudElshiha) - Full Stack Developer
+- [Moaz Mostafa](https://github.com/moazzehry) - Full Stack Developer
 
 **Project Supervisor:** DEPI Program
 
